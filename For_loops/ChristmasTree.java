@@ -3,12 +3,12 @@ public class ChristmasTree {
         int height = 5; // Height of the tree
 
         // Top of the tree
-        System.out.println("    +");
+        System.out.print("     +");
 
         // Tree body with stars
         for (int i = 0; i < height; i++) {
             // Print spaces to center the stars
-            for (int j = 0; j < height - i; j++) {
+            for (int j = 0; j <= height - i; j++) {
                 System.out.print(" ");
             }
 
