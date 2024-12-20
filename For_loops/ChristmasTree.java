@@ -6,14 +6,14 @@ public class ChristmasTree {
         System.out.println("    +");
 
         // Tree body with stars
-        for (int i = 1; i <= height; i++) {
+        for (int i = 0; i < height; i++) {
             // Print spaces to center the stars
-            for (int j = 1; j <= height - i; j++) {
+            for (int j = 0; j < height - i; j++) {
                 System.out.print(" ");
             }
 
             // Print stars
-            for (int j = 1; j <= (2 * i - 1); j++) {
+            for (int j = 0; j < (2 * i - 1); j++) {
                 System.out.print("*");
             }
 
@@ -22,7 +22,7 @@ public class ChristmasTree {
         }
 
         // Tree trunk
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 0; i < 2; i++) {
             // Print spaces to center the trunk
             for (int j = 1; j < height; j++) {
                 System.out.print(" ");
