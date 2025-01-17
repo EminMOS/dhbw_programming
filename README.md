@@ -1,5 +1,5 @@
 HEAD
-# First_Lecture
+# Please look in to the Discussions section
 
 just enjoy it
 
