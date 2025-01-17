@@ -3,10 +3,10 @@ import java.util.Scanner;
 public class EarthquakeCategorization {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            
+            // Get user input for earthquake magnitude
             System.out.print("Enter the earthquake magnitude: ");
             
-           
+            // Check if the input is a valid number
             if (!scanner.hasNextDouble()) {
                 System.out.println("Error: Invalid input. Please enter a valid number.");
                 return;
@@ -14,13 +14,13 @@ public class EarthquakeCategorization {
             
             double magnitude = scanner.nextDouble();
 
-           
+            // Validate if the magnitude is within a valid range
             if (magnitude < 0) {
                 System.out.println("Error: Invalid magnitude. Magnitude must be a non-negative number.");
                 return;
             }
 
-            
+            // Use ternary operator to determine the category
             int category = (magnitude < 2.0) ? 1 :
                            (magnitude < 4.0) ? 2 :
                            (magnitude < 5.0) ? 3 :
@@ -40,7 +40,7 @@ public class EarthquakeCategorization {
                 default -> "Invalid magnitude entered.";
             };
 
-           
+            // Print the category and advice
             System.out.println(advice);
         } catch (Exception e) {
             System.out.println("Error: Invalid input. Please enter a valid number.");
