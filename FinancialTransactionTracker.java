@@ -72,7 +72,7 @@ public class FinancialTransactionTracker {
         String type = scanner.nextLine();
         System.out.print("Enter amount: ");
         double amount = scanner.nextDouble();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine(); 
         System.out.print("Enter date (YYYY-MM-DD): ");
         String date = scanner.nextLine();
         tracker.addTransaction(type, amount, date);
