@@ -1,4 +1,5 @@
-import java.awt.*;
+package pollutionmap;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -6,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
 import javax.imageio.ImageIO;
 
 public class HeatMap {
@@ -24,8 +26,8 @@ public class HeatMap {
     }
 
     public void setValueAt(float latitude, float longitude, float value) {
-        int y = (int) (longitude / 360.0 * resolution);
-        int x = (int) (latitude / 360.0 * resolution);
+        int y = (int) (latitude / 360.0 * resolution);
+        int x = (int) (longitude / 360.0 * resolution);
 
         this.map[y % resolution][x % resolution].add(value);
     }
@@ -45,6 +47,8 @@ public class HeatMap {
 
                         int rectX = Math.floorMod(x + rectXOffset, resolution);
                         int rectY = y + rectYOffset;
+
+                        // Wrapping around from the North Pole to the South Pole does not make any sense
                         if (rectY < 0 || rectY >= resolution) continue;
 
                         float value = average(this.map[rectY][rectX]);
@@ -61,20 +65,20 @@ public class HeatMap {
         return blurred;
     }
 
-    public void exportPng() {
+    public void exportPng(String filename) {
         BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_INT_RGB);
 
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < resolution; y++) {
                 double average = average(this.map[y][x]);
 
-                Color color = new Color((int) (average * 255), 0, 0);
+                Color color = new Color(Math.min((int) (average * 255), 255), 0, 0);
                 image.setRGB(x, y, color.getRGB());
             }
         }
 
         try {
-            ImageIO.write(image, "png", new FileOutputStream(Path.of("heatmap.png").toFile()));
+            ImageIO.write(image, "png", new FileOutputStream(Path.of(filename + ".png").toFile()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

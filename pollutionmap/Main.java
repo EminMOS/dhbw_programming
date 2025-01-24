@@ -1,14 +1,31 @@
+package pollutionmap;
+import java.io.IOException;
+import pollutionmap.HeatMap;
+
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
+    public static void main(String[] args) throws IOException {
+        int resolution = 20;
 
-        System.out.println(Math.floorMod(-5, 360));
+        HeatMap map = new HeatMap(resolution);
 
-        HeatMap map = new HeatMap(10);
-        map.setValueAt(10.0f, 10.0f, 1.0f);
-        map.setValueAt(180.0f, 10.0f, 1.0f);
-        map.setValueAt(270.0f, 80.0f, 1.0f);
-        map.setValueAt(400.0f, 270.0f, 1.0f);
-        map.asBlurred().exportPng();
-}
+        for (int x = 0; x < resolution; x++) {
+            for (int y = 0; y < resolution; y++) {
+                float longitude = (float) (360.0 / resolution * x);
+                float latitude = (float) (360.0 / resolution * y);
+
+                map.setValueAt(
+                        latitude,
+                        longitude,
+                        // My understanding of latitude and longitude was completely incorrect,so we do some hacky semi-functional conversion
+                        0.05F * PollutionApi.getPM25(
+                                (latitude - 180) / 2F,
+                                longitude - 180
+                        )
+                );
+            }
+        }
+
+        map.exportPng("heatmap");
+        map.asBlurred().exportPng("heatmap-blurred");
+    }
 }
