@@ -1,26 +1,30 @@
+package financialtransactiontracker;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
-public class FinancialTransactionTracker {
+public class FinancialTranactionTrackerHashMap {
 
-   private final ArrayList<String> transactions;
+    private final HashMap<Integer, String> transactions;
+    private int transactionIdCounter;
 
-    public FinancialTransactionTracker() {
-        transactions = new ArrayList<>();
+    public FinancialTranactionTrackerHashMap() {
+        transactions = new HashMap<>();
+        transactionIdCounter = 1; // Start IDs from 1
     }
 
     // Add a new transaction
     public void addTransaction(String type, double amount, String date) {
         String transaction = type + "," + amount + "," + date;
-        transactions.add(transaction);
+        transactions.put(transactionIdCounter++, transaction);
     }
 
     // Count transactions from yesterday
     public int countTransactionsFromYesterday() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         int count = 0;
-        for (String transaction : transactions) {
+        for (String transaction : transactions.values()) {
             String[] parts = transaction.split(",");
             if (parts[2].equals(yesterday.toString())) {
                 count++;
@@ -34,7 +38,7 @@ public class FinancialTransactionTracker {
         double totalIncome = 0.0;
         double totalExpenses = 0.0;
 
-        for (String transaction : transactions) {
+        for (String transaction : transactions.values()) {
             String[] parts = transaction.split(",");
             String type = parts[0];
             double amount = Double.parseDouble(parts[1]);
@@ -67,35 +71,33 @@ public class FinancialTransactionTracker {
             scanner.nextLine(); // Consume newline
 
             switch (choice) {
-    case 1 -> {
-        System.out.print("Enter type (Sales/Purchase): ");
-        String type = scanner.nextLine();
-        System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        scanner.nextLine(); 
-        System.out.print("Enter date (YYYY-MM-DD): ");
-        String date = scanner.nextLine();
-        tracker.addTransaction(type, amount, date);
-        System.out.println("Transaction added successfully.");
-    }
-    case 2 -> {
-        int count = tracker.countTransactionsFromYesterday();
-        System.out.println("Transactions from yesterday: " + count);
-    }
-    case 3 -> {
-        double[] results = tracker.calculateIncomeAndExpenses();
-        System.out.println("Total Income (Sales): " + results[0]);
-        System.out.println("Total Expenses (Purchases): " + results[1]);
-    }
-    case 4 -> {
-        System.out.println("Exiting program. Goodbye!");
-        scanner.close();
-        System.exit(0);
-    }
-    default -> System.out.println("Invalid option. Please try again.");
-}
-
+                case 1 -> {
+                    System.out.print("Enter type (Sales/Purchase): ");
+                    String type = scanner.nextLine();
+                    System.out.print("Enter amount: ");
+                    double amount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter date (YYYY-MM-DD): ");
+                    String date = scanner.nextLine();
+                    tracker.addTransaction(type, amount, date);
+                    System.out.println("Transaction added successfully.");
+                }
+                case 2 -> {
+                    int count = tracker.countTransactionsFromYesterday();
+                    System.out.println("Transactions from yesterday: " + count);
+                }
+                case 3 -> {
+                    double[] results = tracker.calculateIncomeAndExpenses();
+                    System.out.println("Total Income (Sales): " + results[0]);
+                    System.out.println("Total Expenses (Purchases): " + results[1]);
+                }
+                case 4 -> {
+                    System.out.println("Exiting program. Goodbye!");
+                    scanner.close();
+                    System.exit(0);
+                }
+                default -> System.out.println("Invalid option. Please try again.");
+            }
         }
     }
-
 }

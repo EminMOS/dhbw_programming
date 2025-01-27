@@ -1,3 +1,5 @@
+package forloops;
+
 public class TransposeMatrix {
     public static void main(String[] args) {
         int[][] A = {

@@ -1,3 +1,5 @@
+package forloops;
+
 public class Pattern {
     public static void main(String[] args) {
         int height = 7; // Height of the pattern (adjustable)

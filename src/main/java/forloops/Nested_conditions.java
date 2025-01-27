@@ -1,3 +1,5 @@
+package forloops;
+
 import java.util.Scanner;
 
 public class Nested_conditions {

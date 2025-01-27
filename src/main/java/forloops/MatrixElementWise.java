@@ -1,3 +1,5 @@
+package forloops;
+
 public class MatrixElementWise {
     public static void main(String[] args) {
         int[][] A = {
