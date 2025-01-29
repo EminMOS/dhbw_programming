@@ -1,71 +1,63 @@
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class TicTacToe {
+public class TicTacToe extends JFrame {
 
-    private static final int SIZE = 3;       // 3×3 board
-    private static char[][] board = new char[SIZE][SIZE];
-    private static char currentPlayer = 'X'; // 'X' starts the game
+    private static final int SIZE = 3;
+    private JButton[][] buttons = new JButton[SIZE][SIZE];
+    private char[][] board = new char[SIZE][SIZE];
+    private char currentPlayer = 'X';
 
     public static void main(String[] args) {
+        // Start the GUI on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> {
+            new TicTacToe().setVisible(true);
+        });
+    }
+
+    public TicTacToe() {
+        super("TicTacToe");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 300);
+        setLocationRelativeTo(null);
+
+        // Create a panel with a 3x3 GridLayout for the buttons
+        JPanel panel = new JPanel(new GridLayout(SIZE, SIZE));
+
+        // Initialize our internal board array with spaces
         initializeBoard();
-        boolean gameRunning = true;
-        Scanner scanner = new Scanner(System.in);
 
-        while (gameRunning) {
-            printBoard();
-            System.out.println("Player " + currentPlayer + ", it's your turn.");
-            System.out.print("Enter row and column (0-2): ");
+        // Create and add the buttons
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                JButton button = new JButton("");
+                button.setFont(new Font("Arial", Font.BOLD, 48));
+                button.setFocusPainted(false);
 
-            int row, col;
-            try {
-                row = scanner.nextInt();
-                col = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please enter two numbers (0, 1, or 2)!");
-                scanner.nextLine(); // clear input buffer
-                continue;
-            }
+                // We pass in final references for row/col into the listener
+                final int r = row;
+                final int c = col;
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        handleButtonClick(r, c, button);
+                    }
+                });
 
-            // Validate the range of row and column
-            if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
-                System.out.println("Coordinates out of range (0-2). Try again.");
-                continue;
-            }
-
-            // Check if the cell is already occupied
-            if (board[row][col] != ' ') {
-                System.out.println("That cell is already taken! Try again.");
-                continue;
-            }
-
-            // Place the move
-            board[row][col] = currentPlayer;
-
-            // Check if this move wins the game
-            if (checkWin(currentPlayer)) {
-                printBoard();
-                System.out.println("Player " + currentPlayer + " wins!");
-                gameRunning = false;
-            }
-            // Check if the board is full (draw)
-            else if (isBoardFull()) {
-                printBoard();
-                System.out.println("It's a draw! The board is full.");
-                gameRunning = false;
-            }
-            // Otherwise, switch the player and continue
-            else {
-                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+                buttons[row][col] = button;
+                panel.add(button);
             }
         }
 
-        scanner.close();
+        add(panel);
     }
 
     /**
-     * Initializes the 3×3 board with empty spaces.
+     * Initialize the board array with ' ' (space) in each cell.
      */
-    private static void initializeBoard() {
+    private void initializeBoard() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 board[i][j] = ' ';
@@ -74,29 +66,50 @@ public class TicTacToe {
     }
 
     /**
-     * Prints the current board to the console.
+     * Handle a button click at (row, col).
      */
-    private static void printBoard() {
-        System.out.println("Current board:");
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                System.out.print(" " + board[i][j] + " ");
-                if (j < SIZE - 1) {
-                    System.out.print("|");
-                }
-            }
-            System.out.println();
-            if (i < SIZE - 1) {
-                System.out.println("---+---+---");
-            }
+    private void handleButtonClick(int row, int col, JButton button) {
+        // If this cell is already taken, do nothing
+        if (board[row][col] != ' ') {
+            return;
         }
-        System.out.println();
+
+        // Place the current player's mark
+        board[row][col] = currentPlayer;
+        button.setText(String.valueOf(currentPlayer));
+
+        // Check for a win
+        if (checkWin(currentPlayer)) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Player " + currentPlayer + " wins!",
+                    "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            resetGame();
+            return;
+        }
+
+        // Check for a draw
+        if (isBoardFull()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "It's a draw!",
+                    "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            resetGame();
+            return;
+        }
+
+        // Switch player
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
 
     /**
-     * Checks if the board is completely filled.
+     * Checks whether all cells on the board are filled (no more moves).
      */
-    private static boolean isBoardFull() {
+    private boolean isBoardFull() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (board[i][j] == ' ') {
@@ -108,10 +121,10 @@ public class TicTacToe {
     }
 
     /**
-     * Checks if the specified player ('X' or 'O') has won.
+     * Checks if the given player (X or O) has a winning row, column, or diagonal.
      */
-    private static boolean checkWin(char player) {
-        // Check rows
+    private boolean checkWin(char player) {
+        // Rows
         for (int i = 0; i < SIZE; i++) {
             if (board[i][0] == player &&
                     board[i][1] == player &&
@@ -119,8 +132,7 @@ public class TicTacToe {
                 return true;
             }
         }
-
-        // Check columns
+        // Columns
         for (int j = 0; j < SIZE; j++) {
             if (board[0][j] == player &&
                     board[1][j] == player &&
@@ -128,20 +140,30 @@ public class TicTacToe {
                 return true;
             }
         }
-
-        // Check diagonals
+        // Diagonals
         if (board[0][0] == player &&
                 board[1][1] == player &&
                 board[2][2] == player) {
             return true;
         }
-
         if (board[0][2] == player &&
                 board[1][1] == player &&
                 board[2][0] == player) {
             return true;
         }
-
         return false;
+    }
+
+    /**
+     * Resets the game board and clears all buttons.
+     */
+    private void resetGame() {
+        initializeBoard();
+        currentPlayer = 'X';
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                buttons[i][j].setText("");
+            }
+        }
     }
 }
